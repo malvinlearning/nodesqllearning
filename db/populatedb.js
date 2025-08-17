@@ -1,7 +1,11 @@
 #! /usr/bin/env node
+if (process.env.NODE_ENV !== "production") {
+  require("dotenv").config({ quiet: true });
+
+}
+
 
 const { Client } = require("pg");
-require("dotenv").config();  // load .env
 
 const SQL = `
 CREATE TABLE IF NOT EXISTS usernames (
