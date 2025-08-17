@@ -1,16 +1,11 @@
-#! /usr/bin/env node
-if (process.env.NODE_ENV !== "production") {
-  require("dotenv").config({ quiet: true });
-
-}
-
-
 const { Client } = require("pg");
+
+const connectionString = process.argv[2] || process.env.DATABASE_URL;
 
 const SQL = `
 CREATE TABLE IF NOT EXISTS usernames (
-  id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-  username VARCHAR (255)
+  id SERIAL PRIMARY KEY,
+  username VARCHAR(255)
 );
 
 INSERT INTO usernames (username) 
@@ -22,13 +17,11 @@ VALUES
 
 async function main() {
   console.log("seeding...");
-  const client = new Client({
-    connectionString: process.env.DATABASE_URL, // ✅ use env var
-  });
+  const client = new Client({ connectionString });
   await client.connect();
   await client.query(SQL);
   await client.end();
   console.log("done");
 }
 
-main();
+main().catch(err => console.error(err));
